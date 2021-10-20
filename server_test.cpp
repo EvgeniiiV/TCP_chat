@@ -22,20 +22,8 @@ using std::cout;
 struct sockaddr_in serveraddress, client;
 socklen_t length;
 int socket_file_descriptor, connection, bind_status, connection_status;
-char message[MESSAGE_LENGTH];
-//string mes;
+char message[MESSAGE_LENGTH];    
 
-//  void my_send(string mes)
-// {     
-//     bzero(ch_message, MESSAGE_LENGTH);
-//     strncpy (ch_message, mes.c_str(), MESSAGE_LENGTH);
-//     ssize_t bytes = write (connection, ch_message, sizeof(ch_message));
-//     // Если передали >= 0  байт, значит пересылка прошла успешно
-//         if(bytes >= 0)  {
-//            cout << "Data successfully sent to the client.!" << endl;
-//         }
-    
-// }   
 //server -> client
 void my_send(string mes)
 {     
@@ -43,12 +31,7 @@ void my_send(string mes)
     strncpy (message, mes.c_str(), MESSAGE_LENGTH);
     //size_t to_send = strlen(message);
     ssize_t bytes = send (connection, message, MESSAGE_LENGTH, 0);
-    sleep(0.1);
-    // while (to_send > bytes)
-    // {
-    //      bytes += send (connection, message, to_send, 0);
-
-    // }
+    sleep(0.1);    
     // Если передали >= 0  байт, значит пересылка прошла успешно
         if(bytes >= 0)  {
            cout << "Data successfully sent to the client.!" << strlen(message) << " bytes"<< endl;
@@ -180,18 +163,14 @@ int main()
             name.clear();
             n = true;
             while (n)
-            {
-                //cout << "Enter your NAME" << endl;
-                //channel (socket_file_descriptor, "Enter your NAME", 'w');
-                // while (name.empty())
-                // {
+            {                
                     my_send ("REGISTRATION: Enter your NAME");
                     while (name.empty())
                 {    
                     name = my_receive(/*socket_file_descriptor*/);                
-                    //getline(cin, name);
+                   
                 }
-                // }
+               
                 for (size_t k = 0; k < user.size(); k++)
                 {
                     if (user[k].get_name() == name)
@@ -201,8 +180,7 @@ int main()
                     }
                 }
                 if (!n)
-                {
-                  //cout << "This name is already used. Choose another name" << endl;
+                {                  
                     my_send ("!This name is already used. Choose another name");
                     name.clear();
                     n = true;
@@ -212,19 +190,15 @@ int main()
             n = true;
             while (n)
             {
-                login.clear(); password.clear();
-                //cout << "Enter LOGIN" << endl;
+                login.clear(); password.clear();                
                 my_send ("Enter LOGIN");
                 while (login.empty())
-                {
-                    //getline(cin, login);
+                {                    
                     login = my_receive(); 
-                }
-                //cout << "Enter PASSWORD" << endl;
+                }                
                 my_send ("Enter PASSWORD");
                 while (password.empty())
-                {
-                    //getline(cin, password);
+                {                    
                     password = my_receive();
                     
                 }
@@ -237,8 +211,7 @@ int main()
                     }
                 }
                 if (!n)
-                {
-                    //cout << "Change the login and try again" << endl;
+                {                    
                     my_send("Change the login and try again");
                     login.clear(); password.clear();
                     n = true;
@@ -264,22 +237,18 @@ int main()
             n = true;
             while (n)
             {
-                name.clear(); login.clear(); password.clear();
-                //cout << "AUTHORIZATION: Enter LOGIN" << endl;
+                name.clear(); login.clear(); password.clear();               
                 my_send("AUTHORIZATION: Enter LOGIN");
                 while (login.empty())
                 {
                     //getline(cin, login);
                     login = my_receive();
 
-                }
-                //cout << "Enter PASSWORD" << endl;
+                }               
                 my_send("Enter PASSWORD");
                 while (password.empty())
-                {
-                    //getline(cin, password);
+                {                    
                     password = my_receive();
-
                 }
                 for (size_t k = 0; k < user.size(); k++)
                 {
@@ -299,8 +268,7 @@ int main()
                 }
                 else n = false;
             }
-            name = user[user_ind].get_name();
-            //cout << "HELLO " << name << "!" << endl << endl;// !!!!!!!!!!!!!!!!!!!!!!!!!!!
+            name = user[user_ind].get_name();            
             {string grit = "!\nHELLO " + name + "!\n\n";
             my_send (grit);}
 
@@ -308,8 +276,7 @@ int main()
 
             //check if this USER has contacts (if choice == 4 && number of groups = 0)
             if (choice == 4 && group.size() == 0)
-            {
-                //cout << "You don't have contacts yet" << endl;
+            {                
                 my_send("!You don't have contacts yet");
                 choice = 3;
             }
@@ -330,8 +297,7 @@ int main()
                 }
 
                 if (n)
-                {
-                    //cout << "!You don't have contacts yet" << endl;
+                {                    
                     my_send("!You don't have contacts yet");
                     choice = 3;
                     break;
@@ -352,8 +318,7 @@ int main()
                     }
             //cheks is there opporutity to create more contacts
             if (presence >= Presence(user.size()))
-            {
-                //cout << user[user_ind].get_name() << ", you are already in touch with all possible contacts" << endl;
+            {                
                 my_send("!" + user[user_ind].get_name() + ", you are already in touch with all possible contacts");
                 choice = 4;
             }
@@ -361,20 +326,16 @@ int main()
             if (choice != 4)
             {
                 while (n)//crearing of contacts
-                {
-                    //cout << "CREATE a CONTACT" << endl;
-                    contact_name.clear();
-                    //cout << "CREATE a CONTACT\nEnter the NAME of CONTACT" << endl;
+                {                   
+                    contact_name.clear();                    
                     my_send("CREATE a CONTACT\nEnter the NAME of CONTACT");
                     while (contact_name.empty())
-                    {
-                       // getline(cin, contact_name);
+                    {                       
                        contact_name = my_receive();
                     }
                     //Chat with yourself is impossible
                     if (user[user_ind].get_name() == contact_name)
-                    {
-                        //cout << "Chat with yourself is impossible" << endl;
+                    {                       
                         my_send("!Chat with yourself is impossible");
                         continue;
                     }
@@ -389,8 +350,7 @@ int main()
                     }
                     //UNREGISTERED user
                     if (n)
-                    {
-                        //cout << "!UNREGISTERED user. Try again" << endl;
+                    {                        
                         my_send("!UNREGISTERED user. Try again");
                         contact_name.clear();
                     }
@@ -401,8 +361,7 @@ int main()
                         for (size_t i = 0; i < temp.size(); i++)
                             //if This USER has already been ADDED to this group
                             if (find(temp.begin(), temp.end(), contact_name) != temp.end())
-                            {
-                                //cout << "!This USER has already been ADDED to this group." << endl;
+                            {                                
                                 my_send ("!This USER has already been ADDED to this group.");
                                 n = true;
                                 break;
@@ -421,17 +380,7 @@ int main()
                 //if ALL the USERS have already been ADDED to this group and number of groups == 0
 
                 if ((choice == 3 || choice == 4) && temp.size() >= user.size() && group.size() == 0)
-                {
-                    //Temp -> Group               
-                    // group.push_back(temp);
-                    // cout << "!Your new group:" << endl;
-                    // for (size_t s = 0; s < temp.size(); s++)
-                    //     cout << s + 1 << ". " << temp[s] << endl;
-                    // cout << "!All registred USERS are in this group" << endl;
-                    // choice = 4;
-                    // temp.clear();
-                    // break;
-
+                {                    
                     group.push_back(temp);
                     string newgroup;
                     //cout << "!Your new group:" << endl;
@@ -453,9 +402,7 @@ int main()
                     n = true;
                     for (size_t i = 0; i < group.size(); i++)//check if This Group is already exists                           
                         if (temp == group[i])
-                        {
-                            // cout << "This Group is already exists, it's NUMBER is " << i << endl;
-                            // cout << "All registred USERS are in this group" << endl;
+                        {                            
                             my_send ("This Group is already exists, it's NUMBER is " + to_string(i) + "\nAll registred USERS are in this group\n");
                             choice = 4;
                             temp.clear();
@@ -463,23 +410,12 @@ int main()
                             break;
                         }
                     if (n)
-                    {   //Temp -> Group                
-                        // group.push_back(temp);
-                        // cout << "Your new group:" << endl;
-                        // for (size_t s = 0; s < temp.size(); s++)
-                        //     cout << s + 1 << ". " << temp[s] << endl;
-                        // cout << "All registred USERS are in this group" << endl;
-                        // choice = 4;
-                        // temp.clear();
-                        // break;
-
+                    {  
                         group.push_back(temp);
                         string newgroup;
                     //cout << "!Your new group:" << endl;
                         for (size_t s = 0; s < temp.size(); s++)
-                        newgroup = newgroup + to_string (s + 1) + ". " + temp[s] + '\n';
-                    // cout << s + 1 << ". " << temp[s] << endl;
-                    //cout << "!All registred USERS are in this group" << endl;
+                        newgroup = newgroup + to_string (s + 1) + ". " + temp[s] + '\n';                    
                         my_send ("!Your new group:\n" + newgroup + "All registred USERS are in this group\n");
                         choice = 4;
                         temp.clear();
@@ -494,8 +430,7 @@ int main()
                     for (size_t i = 0; i < group.size(); i++)
                         //if there is the same group                            
                         if (temp == group[i])
-                        {
-                            //cout << "This Group is already exists, it's NUMBER is " << i << endl;
+                        {                           
                             my_send ("This Group is already exists, it's NUMBER is " + to_string(i) + '\n');
                             n = false;
                             temp.clear();
@@ -505,10 +440,8 @@ int main()
                     if (n)
                     {     //Temp -> Group
                         group.push_back(temp);
-                        string newgroup;
-                       // cout << "Your new group:" << endl;
-                        for (size_t s = 0; s < temp.size(); s++)
-                         //   cout << s + 1 << ". " << temp[s] << endl;
+                        string newgroup;                      
+                        for (size_t s = 0; s < temp.size(); s++)                        
                          newgroup = newgroup + to_string (s + 1) + ". " + temp[s] + '\n';
                          my_send("!Your new group:\n" + newgroup);
                         temp.clear();
@@ -516,36 +449,22 @@ int main()
                     }
                 }
                 //if the group in temp was created but number of groups == 0 
-                else if ((choice == 4) && (temp.size() < user.size()) && (group.size() == 0))
-                {     //Temp -> Group                    
-                    // group.push_back(temp);
-                    // cout << "Your new group:" << endl;
-                    // for (size_t s = 0; s < temp.size(); s++)
-                    //     cout << s + 1 << ". " << temp[s] << endl;
-                    // temp.clear();
-                    // break;
-
+                else if ((choice == 4) && (temp.size() < user.size()) && (group.size() == 0))// !!!!!
+                {    
                     group.push_back(temp);
-                        string newgroup;
-                       // cout << "Your new group:" << endl;
-                        for (size_t s = 0; s < temp.size(); s++)
-                         //   cout << s + 1 << ". " << temp[s] << endl;
+                        string newgroup;                       
+                        for (size_t s = 0; s < temp.size(); s++)                         
                          newgroup = newgroup + to_string (s + 1) + ". " + temp[s] + '\n';
                          my_send("!Your new group:\n" + newgroup);
                         temp.clear();
                         break;
-                }
-                //If we return in 3 to add a contact in this group
-                //and NOT all users were involved in this group 
+                }                
                 else if (choice == 3 && temp.size() < user.size())
                 {
-                    string newgroup;
-                   // cout << "Your group:" << endl;
-                    for (size_t s = 0; s < temp.size(); s++)
-                      //  cout << s + 1 << ". " << temp[s] << endl;
+                    string newgroup;                  
+                    for (size_t s = 0; s < temp.size(); s++)                      
                         newgroup = newgroup + to_string (s + 1) + ". " + temp[s] + '\n';
-                         my_send("!Your new group:\n" + newgroup);
-
+                        my_send("!Your new group:\n" + newgroup);
                     n = true;
                 }
             }
@@ -555,19 +474,7 @@ int main()
 
             choice = request <string, size_t>
                 ("CHAT with your contacts: press key 4, MESSAGE for everyone: press key 6", 4, 6, user.size());
-            if (choice == 6) break;
-            // cout << "Your contacts (groups):" << endl;
-            // for (size_t i = 0; i < group.size(); i++)
-            //     for (size_t j = 0; j < group[i].size(); j++)
-            //         if (group[i][j] == user[user_ind].get_name())
-            //         {
-            //             cout << '\n' << i << ". ";
-            //             for (size_t k = 0; k < group[i].size(); k++)
-            //                 cout << group[i][k] << " ";
-            //             cout << endl;
-            //         }cout << endl;
-
-
+            if (choice == 6) break;      
 
             {
             stringstream ss;
@@ -588,25 +495,13 @@ int main()
             }
 
             do
-            {
-                // cout << "Choose NUMBER of CONTACT (GROUP)" << endl;
-                my_send("Choose NUMBER of CONTACT (GROUP)");
-                // do
-                // {
-                    // cin.clear();
-                    // streamsize L = cin.rdbuf()->in_avail();
-                    // cin.ignore(L);
-                    //cin >> num_of_contact;
-
-                num_of_contact = (size_t)stoi(my_receive());
-
-                    // if (!cin)
-                    //     cout << "ENTER a DIGIT" << endl;
-                //} while (!cin);
+            {                
+                my_send("Choose NUMBER of CONTACT (GROUP)");            
+                num_of_contact = (size_t)stoi(my_receive());                    
                 //prevents obviously wrong input
                 if (num_of_contact >= group.size() || num_of_contact < 0)
-                {                    
-                    //cout << "Error: INVALID number of CONTACT" << endl;
+                {                  
+                    
                     my_send ("!Error: INVALID number of CONTACT\n");
                 }
             } while (num_of_contact >= group.size() || num_of_contact < 0);
@@ -623,8 +518,7 @@ int main()
                     }
 
                 if (n)
-                {
-                    //cout << "It is NOT YOUR GROUP. Try again" << endl;
+                {                    
                     my_send ("!It is NOT YOUR GROUP. Try again\n");
                     choice = 4;
                 }
@@ -637,9 +531,7 @@ int main()
             if (num_of_contact < mess.size())
             {   stringstream ss;
                  for (size_t i = 0; i < mess[num_of_contact].size(); i++)
-                {
-                    // cout << num_of_contact << ". ";
-                    // cout << mess[num_of_contact][i] << endl;
+                {                    
                     ss << num_of_contact << ". " << mess[num_of_contact][i] << '\n';
                     string to_out = ss.str();
                     my_send ("!" + to_out);
@@ -648,13 +540,9 @@ int main()
                 }
             }   
             while (choice == 5)
-            {
-                //cout << "\nTEXT your message" << endl;
-                my_send ("\nTEXT your message");
-                // cin.clear(); cin.ignore();
-                // getline(cin, message);
+            {                
+                my_send ("\nTEXT your message");                
                 message = cc_receive();
-
                 temp_mes.push_back(user[user_ind].get_name() + ": " + message);
                 choice = next_request<size_t>();//to choose further destination
             }
@@ -670,11 +558,8 @@ int main()
             if (choice == 7) ch = false;
             break;
 
-        case 6://Message for everyone
-            //cout << "\nTEXT your message" << endl;
-            my_send ("\nTEXT your message");
-            //cin.clear(); cin.ignore();
-            //getline(cin, message);
+        case 6://Message for everyone           
+            my_send ("\nTEXT your message");           
              message = cc_receive();
             //to push messages to all existing groups with messages
             for (size_t i = 0; i < mess.size(); i++)
