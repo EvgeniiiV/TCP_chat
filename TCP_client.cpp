@@ -31,33 +31,7 @@ int main(){
         cout << "Connection with the server failed!" << endl;
         exit(1);
     }
-    // Взаимодействие с сервером
-    // while(1){
-
-    // bzero(message, sizeof(message));
-    // // Ждем ответа от сервера
-    // read(socket_file_descriptor, message, sizeof(message));
-    // cout << "Data received from server: " << message << endl;
-    // string rcv_message = string (message, sizeof(message));//for received msg    
-
-    // cout << "Enter the message you want to send to the server: " << endl;
-    // string snd_message;        
-    // getline (cin, snd_message);
-    // strncpy (message, snd_message.c_str(), MESSAGE_LENGTH-1);
-
-    //     if ((strncmp(message, "n", 1)) == 0) {
-    //         write(socket_file_descriptor, message, sizeof(message));
-    //         cout << "Client Exit." << endl;
-    //         break;
-    //     }
-    //     ssize_t bytes = write(socket_file_descriptor, message, sizeof(message));
-    //     // Если передали >= 0  байт, значит пересылка прошла успешно
-    //     if(bytes >= 0){
-    //     cout << "Data send to the server successfully.!" << endl;
-    // }
-    
-    
-    // }
+ 
     while(1){
  // Ждем ответа от сервера 
     
@@ -65,7 +39,7 @@ int main(){
     recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
     cout << "_1_" << message << " /" << strlen(message) << " bytes" << endl;
     sleep(0.1);
-    if (message[0] == '!')
+    if (message[0] == '!')//if message doesn't require an answer
         {
             bzero(message, MESSAGE_LENGTH); 
             recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
@@ -85,9 +59,9 @@ int main(){
         }
         ssize_t bytes = write(socket_file_descriptor, message, sizeof(message));
         // Если передали >= 0  байт, значит пересылка прошла успешно
-        //if(bytes >= 0){
-        //cout << "Data send to the server successfully.!" << endl;
-    //}
+        if(bytes >= 0){
+        cout << "Data send to the server successfully.!" << endl;
+    }
 
     }
     // закрываем сокет, завершаем соединение
