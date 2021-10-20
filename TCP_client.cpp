@@ -39,7 +39,7 @@ int main(){
     recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
     cout << "_1_" << message << " /" << strlen(message) << " bytes" << endl;
     sleep(0.1);
-    if (message[0] == '!')//if message doesn't require an answer
+    if (message[0] == '!')//if first received message doesn't require an answer and we have to receive the next one
         {
             bzero(message, MESSAGE_LENGTH); 
             recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
