@@ -25,7 +25,7 @@ int socket_file_descriptor, connection, bind_status, connection_status;
 char message[MESSAGE_LENGTH];    
 
 //server -> client
-void my_send(string mes)
+/*void my_send(string mes)
 {     
     bzero(message, MESSAGE_LENGTH);
     strncpy (message, mes.c_str(), MESSAGE_LENGTH);
@@ -37,7 +37,25 @@ void my_send(string mes)
            cout << "Data successfully sent to the client.!" << strlen(message) << " bytes"<< endl;
         }
     
+}  */
+void my_send(string mes)
+{   cout << "sent to my_send:\n " << mes << "\nsize() = " << mes.size()<< endl;//mes.size() is incresed by MESSAGE_LENGTH   after each iteration: 1037->2011->30... why? 
+    bzero(ch_message, MESSAGE_LENGTH);
+    const char* temp  = mes.data(); //or   const char* temp  = mes.c_str(); - gives exactly the same result! 
+ 
+    cout << temp <<"\nstrlen (temp) = " <<strlen (temp)  << endl; // => gives only the first line (21 or 23 bytes)!!!!!
+    strncpy (ch_message, temp, MESSAGE_LENGTH);
+    ssize_t bytes = write (connection, ch_message, sizeof(ch_message));
+    // Если передали >= 0  байт, значит пересылка прошла успешно
+    if(bytes >= 0)
+      {
+        cout << "Data successfully sent to the client.!" << endl;
+      }
+    
 }   
+
+
+
 //client -> server
 string my_receive ()
 {    
