@@ -39,11 +39,16 @@ char message[MESSAGE_LENGTH];
     
 }  */
 void my_send(string mes)
-{   cout << "sent to my_send:\n " << mes << "\nsize() = " << mes.size()<< endl;//mes.size() is incresed by MESSAGE_LENGTH   after each iteration: 1037->2011->30... why? 
+{   cout << "sent to my_send:\n " << mes << "\nsize() = " << mes.size()<< endl;//mes.size() is incresed by MESSAGE_LENGTH after each next call: 1047->2075->3103... why? 
+   //But sizeof remains the same: 
+   //size from main (sizeof): 32 or (.size()) 1047 - after registration of first user
+   //size from main (sizeof): 32 or (.size()) 2075 - after registration of second user
+   //size from main (sizeof): 32 or (.size()) 3103 - after registration of third user.....
+ 
     bzero(ch_message, MESSAGE_LENGTH);
     const char* temp  = mes.data(); //or   const char* temp  = mes.c_str(); - gives exactly the same result! 
  
-    cout << temp <<"\nstrlen (temp) = " <<strlen (temp)  << endl; // => gives only the first line (21 or 23 bytes)!!!!!
+    cout << temp <<"\nstrlen (temp) = " <<strlen (temp)  << endl; // => gives only the first line (23 bytes)!!!!!
     strncpy (ch_message, temp, MESSAGE_LENGTH);
     ssize_t bytes = write (connection, ch_message, sizeof(ch_message));
     // Если передали >= 0  байт, значит пересылка прошла успешно
