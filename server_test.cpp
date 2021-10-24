@@ -69,9 +69,9 @@ void my_send(string _mes)
     //char* _temp = const_cast<char*>(_mes.c_str());// 3
     //const char* _temp = check.data();// 4
     //char* _temp = strdup(_mes.c_str());// 5
-    char _temp [_mes.length()+1];// 6
+    char _temp [_mes.length()+1];// 6, and all of them give the same result
     for (int i = 0; i < _mes.length(); i++)
-    _temp[i] = _mes[i];//all of them give the same result
+    _temp[i] = _mes[i];
 
     cout << _temp <<"\nstrlen (temp) = " << strlen (_temp)  << endl; // => gives only the first line!!!!!
     strncpy (ch_message, _temp, MESSAGE_LENGTH);
