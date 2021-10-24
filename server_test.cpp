@@ -64,11 +64,14 @@ void my_send(string _mes)
     bzero(ch_message, MESSAGE_LENGTH);
 
     //then the result doesn't depend on the way:    
-    //char* _temp  = &_mes[0]; 
-    //const char* _temp  = _mes.c_str(); 
-    //char* _temp = const_cast<char*>(_mes.c_str());
-    //const char* _temp = check.data();
-    char* _temp = strdup(_mes.c_str()); //all of them give the same result
+    //char* _temp  = &_mes[0]; // 1
+    //const char* _temp  = _mes.c_str();// 2 
+    //char* _temp = const_cast<char*>(_mes.c_str());// 3
+    //const char* _temp = check.data();// 4
+    //char* _temp = strdup(_mes.c_str());// 5
+    char _temp [_mes.length()+1];// 6
+    for (int i = 0; i < _mes.length(); i++)
+    _temp[i] = _mes[i];//all of them give the same result
 
     cout << _temp <<"\nstrlen (temp) = " << strlen (_temp)  << endl; // => gives only the first line!!!!!
     strncpy (ch_message, _temp, MESSAGE_LENGTH);
