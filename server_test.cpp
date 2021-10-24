@@ -59,7 +59,7 @@ char message[MESSAGE_LENGTH];
     
 } */
 
-void my_send(string _mes)
+void my_send(const string _mes)
 {   cout << "sent to my_send:\n " << _mes << "\nsize() = " << _mes.size() << endl;//mes.size() is incresed by MESSAGE_LENGTH after each next call: 1047->2075->3103... why?
     bzero(ch_message, MESSAGE_LENGTH);
 
@@ -68,10 +68,8 @@ void my_send(string _mes)
     //const char* _temp  = _mes.c_str();// 2 
     //char* _temp = const_cast<char*>(_mes.c_str());// 3
     //const char* _temp = check.data();// 4
-    //char* _temp = strdup(_mes.c_str());// 5
-    char _temp [_mes.length()+1];// 6, and all of them give the same result
-    for (int i = 0; i < _mes.length(); i++)
-    _temp[i] = _mes[i];
+    //char* _temp = strdup(_mes.c_str());// 5, and all of them give the same result
+   
 
     cout << _temp <<"\nstrlen (temp) = " << strlen (_temp)  << endl; // => gives only the first line!!!!!
     strncpy (ch_message, _temp, MESSAGE_LENGTH);
