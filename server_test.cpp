@@ -38,7 +38,7 @@ char message[MESSAGE_LENGTH];
         }
     
 }  */
-void my_send(string mes)
+/*void my_send(string mes)
 {   cout << "sent to my_send:\n " << mes << "\nsize() = " << mes.size()<< endl;//mes.size() is incresed by MESSAGE_LENGTH after each next call: 1047->2075->3103... why? 
    //But sizeof remains the same: 
    //size from main (sizeof): 32 or (.size()) 1047 - after registration of first user
@@ -50,6 +50,28 @@ void my_send(string mes)
  
     cout << temp <<"\nstrlen (temp) = " <<strlen (temp)  << endl; // => gives only the first line (23 bytes)!!!!!
     strncpy (ch_message, temp, MESSAGE_LENGTH);
+    ssize_t bytes = write (connection, ch_message, sizeof(ch_message));
+    // Если передали >= 0  байт, значит пересылка прошла успешно
+    if(bytes >= 0)
+      {
+        cout << "Data successfully sent to the client.!" << endl;
+      }
+    
+} */
+
+void my_send(string _mes)
+{   cout << "sent to my_send:\n " << _mes << "\nsize() = " << _mes.size() << endl;//mes.size() is incresed by MESSAGE_LENGTH after each next call: 1047->2075->3103... why?
+    bzero(ch_message, MESSAGE_LENGTH);
+
+    //then the result doesn't depend on the way:    
+    //char* _temp  = &_mes[0]; 
+    //const char* _temp  = _mes.c_str(); 
+    //char* _temp = const_cast<char*>(_mes.c_str());
+    //const char* _temp = check.data();
+    char* _temp = strdup(_mes.c_str()); //all of them give the same result
+
+    cout << _temp <<"\nstrlen (temp) = " << strlen (_temp)  << endl; // => gives only the first line!!!!!
+    strncpy (ch_message, _temp, MESSAGE_LENGTH);
     ssize_t bytes = write (connection, ch_message, sizeof(ch_message));
     // Если передали >= 0  байт, значит пересылка прошла успешно
     if(bytes >= 0)
