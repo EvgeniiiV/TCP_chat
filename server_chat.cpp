@@ -2,6 +2,7 @@
 using namespace std;
 #include<string>
 #include<string.h>
+#include <sstream>
 #include <streambuf>
 #include "server_chat.h"
 #include <vector>
@@ -16,36 +17,29 @@ template <typename T> bool compare_LP(T LP, T L, T P)//compares login and passwo
 
 template <typename T1, typename T2> T2 request(T1 rst, T2 a, T2 b, T2 first)
 {
+    stringstream s_s;
     T2 choice = 0;
     if (!first)
     {
-       
-        my_send ("REGISTRATION of next USER: press key 1\n");
         do//to prevent invalid input
-        {
-            
-            string rcv =  my_receive();
-            choice = (size_t)stoi (rcv);
-            
-            
-
-            if (choice != a)
-                
-                my_send("Enter proper sign\n");
+        {   my_send (s_s.str() + "REGISTRATION of next USER: press key 1\n");      
+            s_s.str("");       
+            string rcv =  my_receive();//receiver from client
+            choice = (size_t)stoi (rcv);       
+            if (choice != a)            
+            s_s << "Enter proper sign\n";
         } 
         while (choice != a);
     }
     if (first)
     {
         do//to prevent invalid input during 
-        {
-            
-            my_send(/*socket_file_descriptor,*/rst);
-            
+        {            
+            my_send(rst);            
             string rcv =  my_receive();
-            choice = (size_t)stoi (rcv);           
-            if (choice != a && choice != b)               
-            my_send("Enter proper sign\n");    
+            choice = (size_t)stoi (rcv);            
+            if (choice != a && choice != b)            
+            my_send ("Enter proper sign\n");    
         } 
         while (choice != a && choice != b);
     }
@@ -53,21 +47,15 @@ template <typename T1, typename T2> T2 request(T1 rst, T2 a, T2 b, T2 first)
 }
 
 template <typename T> T next_request()//case 5, 6
-{
+{    
     size_t choice = 0;
     do
-    {
-        
+    {        
         my_send ("\nLogout and Registration: press key 1\nLogout and Authorization: press key 2\nCreate new contact: press key 3\nChose another contact: press key 4\nNext message to this contact: press key  5\nMessage for everyone: press key 6\nQuit: press key 7\n");
         string rcv = my_receive();
-        choice = (size_t)stoi (rcv);
-        // stringstream ss(my_receive(socket_file_descriptor));
-        // ss >> choice;
-        // if (!cin)
-        //     cout << "ENTER a DIGIT" << endl;
-        if (choice < 1 || choice > 7)
-            //cout << "ENTER 1 - 7" << endl;
-            my_send("ENTER 1 - 7\n");
+        choice = (size_t)stoi (rcv);        
+        if (choice < 1 || choice > 7)           
+        my_send( "ENTER 1 - 7\n");
     } while (choice < 1 || choice > 7);
     return choice;
 }
