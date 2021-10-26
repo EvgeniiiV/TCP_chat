@@ -31,38 +31,31 @@ int main(){
         cout << "Connection with the server failed!" << endl;
         exit(1);
     }
- 
-    while(1){
- // Ждем ответа от сервера 
     
+    while(1){
+ // Ждем ответа от сервера     
     bzero(message, MESSAGE_LENGTH); 
     recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
-    cout << "_1_" << message << " /" << strlen(message) << " bytes" << endl;
-    sleep(0.1);
-    if (message[0] == '!')//if first received message doesn't require an answer and we have to receive the next one
-        {
-            bzero(message, MESSAGE_LENGTH); 
-            recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
-            cout << "_2_" << message << " /" << strlen(message) << " bytes" << endl;
-            sleep(0.1);
-        }
-
-    cout << "Enter the message:" << endl;
+    cout << message << endl; 
+    if ((strncmp(message, "#", 1)) == 0)
+        {            
+            cout << "Client Exit." << endl;
+            close(socket_file_descriptor);
+            return 0;
+        }    
+    
     string snd_message;        
     getline (cin, snd_message);
     strncpy (message, snd_message.c_str(), MESSAGE_LENGTH);
 
-        if ((strncmp(message, "n", 1)) == 0) {
+        if ((strncmp(message, "#", 1)) == 0)
+        {
             write(socket_file_descriptor, message, sizeof(message));
             cout << "Client Exit." << endl;
-            //break;
+            break;
         }
-        ssize_t bytes = write(socket_file_descriptor, message, sizeof(message));
-        // Если передали >= 0  байт, значит пересылка прошла успешно
-        if(bytes >= 0){
-        cout << "Data send to the server successfully.!" << endl;
-    }
-
+    ssize_t bytes = send(socket_file_descriptor, message, sizeof(message), 0);
+    
     }
     // закрываем сокет, завершаем соединение
     close(socket_file_descriptor);
