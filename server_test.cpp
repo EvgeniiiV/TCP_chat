@@ -196,12 +196,12 @@ int main()
             choice = request <string, size_t>("to continue REGISTRATION press key 1, for AUTHORIZATION press key 2", 1, 2, user.size());
             user.push_back(User<string>(name, login, password));
             
-            {                
-                ss.str("");
-                ss << "REGISTERED USERS:\n";
-                for (size_t i = 0; i < user.size(); i++)
-                ss << to_string(i + 1) << ". " << user[i].get_name() << '\n';                         
-            }                          
+                           
+            ss.str("");
+            ss << "REGISTERED USERS:\n";
+            for (size_t i = 0; i < user.size(); i++)
+            ss << to_string(i + 1) << ". " << user[i].get_name() << '\n';                         
+                                     
             break;             
             
            
