@@ -17,8 +17,7 @@ int main(){
     if(socket_file_descriptor == -1){
         cout << "Creation of Socket failed!" << endl;
         exit(1);
-    }
- 
+    } 
     // Установим адрес сервера
     serveraddress.sin_addr.s_addr = inet_addr("127.0.0.1");
     // Зададим номер порта
@@ -43,18 +42,22 @@ int main(){
             close(socket_file_descriptor);
             return 0;
         }    
-    
-    string snd_message;        
-    getline (cin, snd_message);
+    bzero(message, MESSAGE_LENGTH); 
+    string snd_message;
+    while (snd_message.empty() || snd_message == " ")//to prevent empty input        
+    {
+        snd_message.clear();
+        getline (cin, snd_message);
+    }
     strncpy (message, snd_message.c_str(), MESSAGE_LENGTH);
 
         if ((strncmp(message, "#", 1)) == 0)
         {
-            write(socket_file_descriptor, message, sizeof(message));
+            write(socket_file_descriptor, message, MESSAGE_LENGTH);
             cout << "Client Exit." << endl;
             break;
         }
-    ssize_t bytes = send(socket_file_descriptor, message, sizeof(message), 0);
+    ssize_t bytes = send(socket_file_descriptor, message, sizeof (snd_message), 0);
     
     }
     // закрываем сокет, завершаем соединение
