@@ -24,10 +24,10 @@ template <typename T1, typename T2> T2 request(T1 rst, T2 a, T2 b, T2 first)
         do//to prevent invalid input
         {   my_send (s_s.str() + "REGISTRATION of next USER: press key 1\n");      
             s_s.str("");       
-            string rcv =  my_receive();//receiver from client
+            string rcv =  my_receive();//receive from client
             choice = (size_t)stoi (rcv);       
             if (choice != a)            
-            s_s << "Enter proper sign\n";
+            s_s << "Enter a proper digit\n";
         } 
         while (choice != a);
     }
@@ -35,11 +35,12 @@ template <typename T1, typename T2> T2 request(T1 rst, T2 a, T2 b, T2 first)
     {
         do//to prevent invalid input during 
         {            
-            my_send(rst);            
+            my_send(s_s.str() + rst);
+            s_s.str("");           
             string rcv =  my_receive();
             choice = (size_t)stoi (rcv);            
-            if (choice != a && choice != b)            
-            my_send ("Enter proper sign\n");    
+            if (choice != a && choice != b)          
+            s_s << "Enter proper digit\n";   
         } 
         while (choice != a && choice != b);
     }
