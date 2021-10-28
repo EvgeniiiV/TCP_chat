@@ -2,8 +2,10 @@
 using namespace std;
 #include<string>
 #include "server_chat.cpp"
+//#include "server_chat.h"
 #include<vector>
 #include "server_user.cpp"
+//#include "server_user.h"
 #include<algorithm> 
 #include<sstream>
 #include<unistd.h>
@@ -28,22 +30,21 @@ void my_send(string _mes)
 {     
     bzero(ch_message, MESSAGE_LENGTH);
     strncpy (ch_message, _mes.c_str(), MESSAGE_LENGTH);
-    ssize_t bytes = send (connection, ch_message, sizeof(ch_message),0);   
-  
+    if (_mes.size() >= MESSAGE_LENGTH)
+    {
+        ch_message[MESSAGE_LENGTH-1] = '\0';
+    }
+    ssize_t bytes = send(connection, ch_message, sizeof(ch_message), 0);    
 }  
  
 //client -> server
 string my_receive ()
 {    
     bzero(ch_message, MESSAGE_LENGTH);
-    recv(connection, ch_message, sizeof(ch_message), 0);
-        // if (strncmp("end", ch_message, 3) == 0) {
-        //     cout << "Client Exited." << endl;
-        //     cout << "Server is Exiting..!" << endl;
-        //     close(socket_file_descriptor);                
-        // }
-    cout << ch_message << endl;
-    string s_read = string (ch_message, sizeof(ch_message));//for received msg     
+    recv(connection, ch_message, MESSAGE_LENGTH, 0);    
+       
+    string s_read = string (ch_message, strlen(ch_message));//for received msg    
+    cout << s_read << endl;  
     return s_read;    
 }  
 
@@ -101,8 +102,7 @@ int main()
     cout << "Server is Exiting..!" << endl;
     close(socket_file_descriptor);
     return 0;
-    }    
-        
+    }          
 
     
     vector<User<string>>user;
@@ -196,12 +196,12 @@ int main()
             choice = request <string, size_t>("to continue REGISTRATION press key 1, for AUTHORIZATION press key 2", 1, 2, user.size());
             user.push_back(User<string>(name, login, password));
             
-                           
+                            
             ss.str("");
             ss << "REGISTERED USERS:\n";
             for (size_t i = 0; i < user.size(); i++)
-            ss << to_string(i + 1) << ". " << user[i].get_name() << '\n';                         
-                                     
+                ss << to_string(i + 1) << ". " << user[i].get_name() << '\n';                         
+                                      
             break;             
             
            
@@ -437,10 +437,8 @@ int main()
             choice = request <string, size_t>
                 (ss.str() + "CHAT with your contacts: press key 4, MESSAGE for everyone: press key 6", 4, 6, user.size());
                 ss.str("");
-            if (choice == 6) break;          
-
-            {
-            
+            if (choice == 6) break;      
+                    
             ss << "Your contacts (groups):" << endl;
             for (size_t i = 0; i < group.size(); i++)
                 for (size_t j = 0; j < group[i].size(); j++)
@@ -451,10 +449,7 @@ int main()
                             ss << group[i][k] << " ";
                         ss << '\n';
                     }ss << '\n';
-
                 
-
-            }
 
             do
             {                
@@ -548,6 +543,7 @@ int main()
 
     return 0;
 }     
+
 
 
 
