@@ -5,13 +5,14 @@
 #include <arpa/inet.h> 
 using namespace std; 
 #define MESSAGE_LENGTH 1024 // Максимальный размер буфера для данных
-#define PORT 7777 // Будем использовать этот номер порта
+#define PORT 20000 // Будем использовать этот номер порта
  
 int socket_file_descriptor, connection;
 struct sockaddr_in serveraddress, client;
 char message[MESSAGE_LENGTH];
 
-int main(){
+int main()
+{
     // Создадим сокет
     socket_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
     if(socket_file_descriptor == -1){
@@ -31,33 +32,38 @@ int main(){
         exit(1);
     }
     
-    while(1){
- // Ждем ответа от сервера     
-    bzero(message, MESSAGE_LENGTH); 
-    recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
-    cout << message << endl; 
-    if ((strncmp(message, "#", 1)) == 0)
+    while(1)
+    {
+      // Ждем ответа от сервера     
+      bzero(message, MESSAGE_LENGTH); 
+      recv(socket_file_descriptor, message, MESSAGE_LENGTH,0);
+
+      cout << message << endl; 
+      if ((strncmp(message, "#", 1)) == 0)
         {            
             cout << "Client Exit." << endl;
             close(socket_file_descriptor);
             return 0;
-        }    
-    bzero(message, MESSAGE_LENGTH); 
-    string snd_message;
-    while (snd_message.empty() || snd_message == " ")//to prevent empty input        
-    {
+        }     
+    
+      bzero(message, MESSAGE_LENGTH);
+      string snd_message;
+      while (snd_message.empty())//to prevent empty input        
+      {
         snd_message.clear();
         getline (cin, snd_message);
-    }
-    strncpy (message, snd_message.c_str(), MESSAGE_LENGTH);
+      }
+      strncpy (message, snd_message.c_str(), MESSAGE_LENGTH);
 
-        if ((strncmp(message, "#", 1)) == 0)
+      if ((strncmp(message, "#", 1)) == 0)
         {
             write(socket_file_descriptor, message, MESSAGE_LENGTH);
             cout << "Client Exit." << endl;
             break;
         }
-    ssize_t bytes = send(socket_file_descriptor, message, sizeof (snd_message), 0);
+      ssize_t bytes = send(socket_file_descriptor, message, sizeof (snd_message), 0);
+      if (bytes < 0)
+      perror ("send");
     
     }
     // закрываем сокет, завершаем соединение
