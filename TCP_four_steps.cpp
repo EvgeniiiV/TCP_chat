@@ -22,8 +22,6 @@ using namespace std;
 #define MY_QUEUE 5//num of clients in the connection queue
 
 #define MaxUserCount 10//limit of Users
-#define MaxGroupCount 100//limit of contacts (groups of users) 
-#define MaxMessageCount 200//limit of messages in one group
 
 struct sockaddr_in serveraddress, client;
 socklen_t length;
@@ -35,26 +33,15 @@ fd_set readfds; //set of socket descriptors
 int main()
 {
     vector<User<string>>user;
-    user.reserve(MaxUserCount);
-    vector<vector<string>>group;//to storage user's names in the group (contact)
-    group.reserve(MaxGroupCount);
-    vector<vector<string>>mess;//messages
-    mess.reserve(MaxMessageCount);
-    vector<string>temp;//keeps cuttent group's composition 
-    temp.reserve(MaxGroupCount);
-    vector <string>temp_mes;//for temporary storage of messages (case 5, 6)
-    temp_mes.reserve(20);
+    user.reserve(MaxUserCount);    
     size_t user_ind = 0;//to keep current index of AUTHORIZED USER       
-    string name, login, password;//current user
-    string contact_name;//current contact
-    string message;
+    string name, login, password;//current user  
     size_t choice = 1;//switchmax_clients = 30
     bool ch(true);//while    
     bool n;//cycles   
     size_t num_of_contact;//to chose the contact in case 4
     size_t presence = 0;//number of groups where this user lists
-    stringstream ss;//to collect strings for my_send()
-    //int counter = 0;//for case 2
+    stringstream ss;//to collect strings for my_send()   
     int opt = 1; 
 
      // Создадим сокет
@@ -239,6 +226,7 @@ int main()
             n = true;
             while (n)
             {
+                //if(!fork())
                 for(int i = 0; i < connections.size(); i++)
                 {
                     connection = connections[i];
@@ -293,7 +281,7 @@ int main()
 
         case 3://individual messages
         {
-
+            
             my_send (ss.str() + "Enter SPACE to choose the name of your friend\nEnter 4 to text to everyone\nEnter # to quit chat\n", connection);
             ss.str("");
             if (my_receive(connection) == "4")
@@ -331,7 +319,7 @@ int main()
 
             my_send (m + "\nENTER SPACE to continue", connection);
             my_receive(connection);
-            
+           
         }
             break;
         
