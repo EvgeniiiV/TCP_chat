@@ -369,7 +369,7 @@ int main()
                 {
                     close(connection);
                     connections.erase(connections.begin() + i);
-                    if (connections.size() > 1) i++;
+                    if (i < connections.size() - 1) i++;
                     connection = connections[i];
                     choice = 3;
                     break;
