@@ -2,7 +2,7 @@
 using namespace std;
 #include <string>
 #include "server_chat.cpp"
-//#include "server_chat.h"
+#include "server_chat.h"
 #include <vector>
 #include "server_user.cpp"
 //#include "server_user.h"
@@ -110,12 +110,10 @@ int main()
          }     
          
          //wait for an activity on one of the sockets          
-         activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);
-         if ((activity < 0) && (errno!=EINTR))  
+         activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);         
          {  
             printf("select error");  
-         }  
-           
+         }             
          //If something happened on the master socket , 
          //then its an incoming connection 
           if (FD_ISSET(socket_file_descriptor, &readfds))  
@@ -130,17 +128,17 @@ int main()
             //inform user of socket number - used in send and receive commands 
             printf("New connection , socket fd is %d , ip is : %s , port : %d \n" , connection , inet_ntoa(serveraddress.sin_addr) , ntohs
                   (serveraddress.sin_port));  
-            connections.push_back(connection);           
+            connections.push_back(connection);         
             
           }  
           
-             else
-             {
-                for (int i = 0; i < connections.size(); i++)
-                my_receive(connections[i]); 
-                choice  = 2;
-                break;
-             }              
+          else
+          {
+            for (int i = 0; i < connections.size(); i++)
+            my_receive(connections[i]); 
+            choice  = 2;
+            break;
+          }              
 
             name.clear();
             n = true;
@@ -226,7 +224,7 @@ int main()
             n = true;
             while (n)
             {
-                //if(!fork())
+                
                 for(int i = 0; i < connections.size(); i++)
                 {
                     connection = connections[i];
@@ -258,6 +256,7 @@ int main()
                         ss << "Invalid password or login. Try again\n";
                         login.clear(); password.clear();
                         n = true;
+                        break;
                     }
                     else n = false;
                    
@@ -290,7 +289,8 @@ int main()
             }
             if (ch_message[0] == '#')
             {
-                ch = false;
+                
+                choice  = 5;
                 break;
             }
             if (ch_message[0] != ' ')
@@ -300,23 +300,24 @@ int main()
             }
             my_send ("text the name of your friend", connection);
             string n = my_receive(connection);
-            my_send ("text your message to " + n, connection);
-            string m = my_receive(connection);
+            
             size_t k;
             for (k = 0; k < user.size(); k++)
             {
                 if (n == user[k].get_name())
-                {
-                    connection = user[k].get_FD_by_name();
+                {                    
                     break;
                 }
             }
             if (k >= user.size())
             {
                 ss << "Error of the name, try again\n";
+                n.clear();
                 break;
             }
-
+            my_send ("text your message to " + n, connection);
+            string m = my_receive(connection);
+            connection = user[k].get_FD_by_name();
             my_send (m + "\nENTER SPACE to continue", connection);
             my_receive(connection);
            
@@ -325,39 +326,74 @@ int main()
         
         case 4://message for everyone    
         {
+           
             my_send ("text your message for everyone\n", connection);
             string m = my_receive(connection);           
             for (int i = 0; i < connections.size(); i++)
             {
-                if (connections[i] == connection)
-                i ++;
-                my_send(m + "\nEnter SPACE to continue", connections[i]);
-                my_receive(connections[i]);
+                 if (connections[i] == connection && i < connections.size() - 1)
+                {
+                    i++;
+                    my_send(m + "\nEnter SPACE to continue", connections[i]);
+                    my_receive(connections[i]);
+                }
+                else if (connections[i] != connection)
+                {
+                    my_send(m + "\nEnter SPACE to continue", connections[i]);
+                    my_receive(connections[i]);
+                }
+                else break;
             }     
         }
            
         choice = 3;
         break;
+
+        case 5:
+
+        if (connections.size() == 1)
+         {
+             cout << "server is to close" << endl;
+             my_send("# BYE!", connection);
+             close(connection);
+             ch = false;
+             break;
+
+         }
+         else
+         {                      
+            my_send("# BYE!", connection);            
+            for (int i = 0; i < connections.size(); i++)
+            {
+                if (connections[i] == connection && i < connections.size() - 1)
+                {
+                    close(connection);
+                    connections.erase(connections.begin() + i);
+                    i++;
+                    connection = connections[i];
+                    choice = 3;
+                    break;
+                }
+                else if (connections[i] == connection && i == connections.size() - 1)
+                {
+                    close(connection);
+                    connections.erase(connections.begin() + i);
+                    connection = connections[0];
+                    choice = 3;
+                    break;
+                }
+                 
+            }
+         }if (choice == 3) break;
+
       }
        
     }
 
-    if (ch == false)//FINISH
-    {
-        for(int i = 0; i < connections.size(); i++)
-        {
-            if(connections[i] == connection) i++;
-            my_send ("#", connections[i]);
-        }
-        cout << "server is to close" << endl;
-        for(int i = 0; i < connections.size(); i++)
-        {
-            if(connections[i] == connection) i++;
-            close(connections[i]);
-        }
-    }
 
     return 0;
 }     
+
+
 
 
