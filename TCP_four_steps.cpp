@@ -5,17 +5,16 @@ using namespace std;
 #include "server_chat.h"
 #include <vector>
 #include "server_user.cpp"
-//#include "server_user.h"
 #include <algorithm> 
 #include <sstream>
 #include <unistd.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h> 
-//#include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <arpa/inet.h>
+#include <map>
 
 #define MESSAGE_LENGTH 1024 // Максимальный размер буфера для данных
 #define PORT 20000 // Будем использовать этот номер порта
@@ -43,6 +42,9 @@ int main()
     size_t presence = 0;//number of groups where this user lists
     stringstream ss;//to collect strings for my_send()   
     int opt = 1; 
+    map<int, string>CU;//connection user
+    map<string, int>UC; //user connection
+
 
      // Создадим сокет
     socket_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
@@ -205,7 +207,10 @@ int main()
                 else  n = false;
             }            
 
-            user.push_back(User<string>(name, login, password, connection));
+            user.push_back(User<string>(name, login, password));
+            UC.insert(make_pair(name, connection));
+            CU.insert(make_pair(connection, name));
+            
             cout << "User's connection = " << connection << endl;
                          
             ss.str("");
@@ -300,26 +305,28 @@ int main()
             }
             my_send ("text the name of your friend", connection);
             string n = my_receive(connection);
+            auto it = UC.find(n);
+            int c = it -> second;           
             
-            size_t k;
-            for (k = 0; k < user.size(); k++)
-            {
-                if (n == user[k].get_name())
-                {                    
-                    break;
-                }
-            }
-            if (k >= user.size())
-            {
-                ss << "Error of the name, try again\n";
-                n.clear();
-                break;
-            }
             my_send ("text your message to " + n, connection);
-            string m = my_receive(connection);
-            connection = user[k].get_FD_by_name();
-            my_send (m + "\nENTER SPACE to continue", connection);
-            my_receive(connection);
+            string m = my_receive(connection);            
+
+
+            if (find(connections.begin(), connections.end(), c) != connections.end())
+            {
+                connection = c;
+                my_send (m + "\nENTER SPACE to continue", connection);
+                my_receive(connection);
+            }
+            else       
+           {
+                ss << "User is offline or unregistered, choose another one\n"; 
+                n.clear();
+            }   
+    
+            
+                         
+            
            
         }
             break;
@@ -365,18 +372,20 @@ int main()
             my_send("# BYE!", connection);            
             for (int i = 0; i < connections.size(); i++)
             {
-                if (connections[i] == connection && i < connections.size() - 1)
+                
+                if (connections[i] == connection)
                 {
                     close(connection);
-                    connections.erase(connections.begin() + i);
-                    if (i < connections.size() - 1) i++;
-                    connection = connections[i];
-                    choice = 3;
-                    break;
-                }
-                else if (connections[i] == connection && i == connections.size() - 1)
-                {
-                    close(connection);
+
+                    auto it = CU.find(connection);
+                    if(it != CU.end())
+                    name = it -> second;
+                    map<int, string >::iterator it1;            
+                    it1 = CU.find(connection);
+                    CU.erase(it1);
+                    map<string, int >::iterator it2;            
+                    it2 = UC.find(name);
+                    UC.erase(it2);
                     connections.erase(connections.begin() + i);
                     connection = connections[0];
                     choice = 3;
@@ -388,11 +397,12 @@ int main()
 
       }
        
-    }
-
+    } 
 
     return 0;
 }     
+
+
 
 
 
